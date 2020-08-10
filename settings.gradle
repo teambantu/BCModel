@@ -1,0 +1,3 @@
+include ':BCModel'
+include ':app'
+rootProject.name = "BCModelExample"
