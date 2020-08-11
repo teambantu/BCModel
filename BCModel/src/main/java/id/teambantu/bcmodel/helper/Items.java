@@ -5,7 +5,7 @@ import id.teambantu.bcmodel.type.ItemType;
 
 public class Items {
     private String id = "";
-    private ItemType type = NONE;
+    private ItemType type = ItemType.NONE;
     private int count;
 
     public Items() {
