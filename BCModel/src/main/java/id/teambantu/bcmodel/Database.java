@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQueryEventListener;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -701,46 +702,63 @@ public class Database {
             public static StorageReference news(){return storageRef().child(NEWS);}
             public static StorageReference slider(){return storageRef().child(SLIDER);}
             public static void upload(byte[] file, StorageReference ref, final BCUploadFile listener){
-                UploadTask uploadTask = ref.putBytes(file);
-                uploadTask.addOnFailureListener(new OnFailureListener() {
+                final StorageReference refFile = ref.child(String.valueOf(System.currentTimeMillis()));
+
+                UploadTask uploadTask = refFile.putBytes(file);
+
+                uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                     @Override
-                    public void onFailure(@NonNull Exception e) {
-                        listener.onFailure(e);
+                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                        if(!task.isSuccessful())
+                            throw task.getException();
+                        return refFile.getDownloadUrl();
                     }
-                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
-                    public void onSuccess(UploadTask.TaskSnapshot snapshot) {
-                        listener.onSuccess(snapshot);
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if(task.isSuccessful()) listener.onSuccess(task.getResult());
+                        else listener.onFailure(task.getException());
                     }
                 });
             }
 
             public static void upload(InputStream stream, StorageReference ref, final BCUploadFile listener){
-                UploadTask uploadTask = ref.putStream(stream);
-                uploadTask.addOnFailureListener(new OnFailureListener() {
+
+                final StorageReference refFile = ref.child(String.valueOf(System.currentTimeMillis()));
+
+                UploadTask uploadTask = refFile.putStream(stream);
+                uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                     @Override
-                    public void onFailure(@NonNull Exception e) {
-                        listener.onFailure(e);
+                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                        if(!task.isSuccessful())
+                            throw task.getException();
+                        return refFile.getDownloadUrl();
                     }
-                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
-                    public void onSuccess(UploadTask.TaskSnapshot snapshot) {
-                        listener.onSuccess(snapshot);
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if(task.isSuccessful()) listener.onSuccess(task.getResult());
+                        else listener.onFailure(task.getException());
                     }
                 });
             }
 
             public static void upload(Uri uri, StorageReference ref, final BCUploadFile listener){
-                UploadTask uploadTask = ref.putFile(uri);
-                uploadTask.addOnFailureListener(new OnFailureListener() {
+                final StorageReference refFile = ref.child(String.valueOf(System.currentTimeMillis()));
+                UploadTask uploadTask = refFile.putFile(uri);
+
+                uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                     @Override
-                    public void onFailure(@NonNull Exception e) {
-                        listener.onFailure(e);
+                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                        if(!task.isSuccessful())
+                            throw task.getException();
+                        return refFile.getDownloadUrl();
                     }
-                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
-                    public void onSuccess(UploadTask.TaskSnapshot snapshot) {
-                        listener.onSuccess(snapshot);
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if(task.isSuccessful()) listener.onSuccess(task.getResult());
+                        else listener.onFailure(task.getException());
                     }
                 });
             }
