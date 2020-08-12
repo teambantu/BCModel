@@ -136,7 +136,7 @@ public class Database {
 
     public static class Firebase {
 
-        private static FirebaseAuth auth() {
+        public static FirebaseAuth auth() {
             return FirebaseAuth.getInstance();
         }
 
