@@ -181,11 +181,11 @@ public class Database {
             MITRA, PROMO, DRIVER, USER, NEWS, CHAT, NOTIF, ORDER, SLIDER
         }
 
-        public static void getWithStringID(final List<String> ids, DocumentReference ref, final BCGetWithId listener){
+        public static void getWithStringID(final List<String> ids, CollectionReference ref, final BCGetWithId listener){
             final List<DocumentSnapshot>[] result = new List[]{new ArrayList<>()};
             for (String id:
                     ids) {
-                addDocumentChangeListener(ref, new BCDocumentSnapshot() {
+                addDocumentChangeListener(ref.document(id), new BCDocumentSnapshot() {
                     @Override
                     public void onDocumentChange(DocumentSnapshot snapshot) {
                         List<DocumentSnapshot> tmp = new ArrayList<>();
