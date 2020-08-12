@@ -49,6 +49,7 @@ import id.teambantu.bcmodel.collections.Promo;
 import id.teambantu.bcmodel.collections.Slider;
 import id.teambantu.bcmodel.collections.User;
 import id.teambantu.bcmodel.handler.BCBoolean;
+import id.teambantu.bcmodel.handler.BCDBTask;
 import id.teambantu.bcmodel.handler.BCDocumentReference;
 import id.teambantu.bcmodel.handler.BCDocumentSnapshot;
 import id.teambantu.bcmodel.handler.BCGetWithId;
@@ -818,11 +819,25 @@ public class Database {
                 }
             });
         }
-        public static void addMitraMaps(String id, Location location){
-            fire(Firebase.Realtime.availableMitra()).setLocation(id, new GeoLocation(location.getLatitude(), location.getLongitude()));
+        public static void addMitraMaps(String id, Location location, final BCBoolean list){
+            fire(Firebase.Realtime.availableMitra()).setLocation(id, new GeoLocation(location.getLatitude(), location.getLongitude()), new GeoFire.CompletionListener() {
+                @Override
+                public void onComplete(String key, DatabaseError error) {
+                    if (error==null)
+                    list.onSuccess(true);
+                    else  list.onSuccess(false);
+                }
+            });
         }
-        public static void addDriverMaps(String id, Location location){
-            fire(Firebase.Realtime.availableDriver()).setLocation(id, new GeoLocation(location.getLatitude(), location.getLongitude()));
+        public static void addDriverMaps(String id, Location location, final BCBoolean list){
+            fire(Firebase.Realtime.availableDriver()).setLocation(id, new GeoLocation(location.getLatitude(), location.getLongitude()), new GeoFire.CompletionListener() {
+                @Override
+                public void onComplete(String key, DatabaseError error) {
+                    if (error==null)
+                        list.onSuccess(true);
+                    else  list.onSuccess(false);
+                }
+            });
         }
     }
 }
