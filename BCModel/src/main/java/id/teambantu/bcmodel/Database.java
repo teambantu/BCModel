@@ -764,8 +764,8 @@ public class Database {
 
     public static class Maps{
         private static GeoFire fire(DatabaseReference ref){return new GeoFire(ref);}
-        public static void searchNearby(DatabaseReference ref, GeoLocation center, double radius, final BCNearby nearby){
-            fire(ref).queryAtLocation(center, radius).addGeoQueryEventListener(new GeoQueryEventListener() {
+        public static void searchNearby(DatabaseReference ref, Location center, double radius, final BCNearby nearby){
+            fire(ref).queryAtLocation(new GeoLocation(center.getLatitude(), center.getLongitude()), radius).addGeoQueryEventListener(new GeoQueryEventListener() {
                 HashMap<String, String> data = new HashMap<>();
                 @Override
                 public void onKeyEntered(String key, GeoLocation location) {
