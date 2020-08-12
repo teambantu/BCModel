@@ -184,6 +184,10 @@ public class Database {
 
         public static void getWithStringID(final List<String> ids, CollectionReference ref, final BCGetWithId listener){
             final List<DocumentSnapshot>[] result = new List[]{new ArrayList<>()};
+            if(ids.size() == 0){
+                listener.onGetAll(result[0]);
+                return;
+            }
             final int[] i = {0};
             for (String id:
                     ids) {
