@@ -144,7 +144,7 @@ public class Database {
             return auth().getCurrentUser();
         }
 
-        private static void addDocumentChangeListener(DocumentReference ref, final BCDocumentSnapshot listener) {
+        public static void addDocumentChangeListener(DocumentReference ref, final BCDocumentSnapshot listener) {
             ref.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override
                 public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -155,7 +155,7 @@ public class Database {
             });
         }
 
-        private static void addQueryChangeListener(CollectionReference ref, final BCQuerySnapshot listener) {
+        public static void addQueryChangeListener(CollectionReference ref, final BCQuerySnapshot listener) {
             ref.addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -166,7 +166,7 @@ public class Database {
             });
         }
 
-        private static void addQueryChangeListener(Query ref, final BCQuerySnapshot listener) {
+        public static void addQueryChangeListener(Query ref, final BCQuerySnapshot listener) {
             ref.addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
