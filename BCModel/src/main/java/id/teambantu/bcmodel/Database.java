@@ -802,6 +802,7 @@ public class Database {
                 @Override
                 public void onDataExited(DataSnapshot dataSnapshot) {
                     data.remove(dataSnapshot.getKey());
+                    update();
                 }
 
                 @Override
@@ -816,10 +817,13 @@ public class Database {
 
                 @Override
                 public void onGeoQueryReady() {
+                    update();
+                }
+
+                void update(){
                     List<String> near = new ArrayList<>(data.values());
                     nearby.onNearby(near);
                 }
-
                 @Override
                 public void onGeoQueryError(DatabaseError error) {
 
