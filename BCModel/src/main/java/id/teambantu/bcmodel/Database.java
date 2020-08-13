@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQueryDataEventListener;
 import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -18,6 +19,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -790,30 +792,30 @@ public class Database {
     public static class Maps{
         private static GeoFire fire(DatabaseReference ref){return new GeoFire(ref);}
         public static void searchNearby(DatabaseReference ref, Location center, double radius, final BCNearby nearby){
-            fire(ref).queryAtLocation(new GeoLocation(center.getLatitude(), center.getLongitude()), radius).addGeoQueryEventListener(new GeoQueryEventListener() {
+            fire(ref).queryAtLocation(new GeoLocation(center.getLatitude(), center.getLongitude()), radius).addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
                 HashMap<String, String> data = new HashMap<>();
                 @Override
-                public void onKeyEntered(String key, GeoLocation location) {
-                    data.put(key, key);
+                public void onDataEntered(DataSnapshot dataSnapshot, GeoLocation location) {
+                    data.put(dataSnapshot.getKey(), dataSnapshot.getKey());
                 }
 
                 @Override
-                public void onKeyExited(String key) {
-                    data.remove(key);
-                    update();
+                public void onDataExited(DataSnapshot dataSnapshot) {
+                    data.remove(dataSnapshot.getKey());
                 }
 
                 @Override
-                public void onKeyMoved(String key, GeoLocation location) {
+                public void onDataMoved(DataSnapshot dataSnapshot, GeoLocation location) {
+
+                }
+
+                @Override
+                public void onDataChanged(DataSnapshot dataSnapshot, GeoLocation location) {
 
                 }
 
                 @Override
                 public void onGeoQueryReady() {
-                   update();
-                }
-
-                void update(){
                     List<String> near = new ArrayList<>(data.values());
                     nearby.onNearby(near);
                 }
