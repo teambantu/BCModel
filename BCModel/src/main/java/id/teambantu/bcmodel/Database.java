@@ -189,7 +189,6 @@ public class Database {
                 listener.onGetAll(result[0]);
                 return;
             }
-            final int[] i = {0};
             for (String id:
                     ids) {
                 addDocumentChangeListener(ref.document(id), new BCDocumentSnapshot() {
@@ -204,8 +203,7 @@ public class Database {
                         }
                         result[0] = tmp;
                         result[0].add(snapshot);
-                        if(i[0] != ids.size()) i[0]++;
-                        if(i[0] == ids.size()){
+                        if(result[0].size() == ids.size()){
                             listener.onGetAll(result[0]);
                         }
                     }
