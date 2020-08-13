@@ -798,6 +798,7 @@ public class Database {
                 @Override
                 public void onKeyExited(String key) {
                     data.remove(key);
+                    update();
                 }
 
                 @Override
@@ -807,6 +808,10 @@ public class Database {
 
                 @Override
                 public void onGeoQueryReady() {
+                   update();
+                }
+
+                void update(){
                     List<String> near = new ArrayList<>(data.values());
                     nearby.onNearby(near);
                 }
