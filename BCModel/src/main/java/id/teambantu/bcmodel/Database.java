@@ -204,7 +204,7 @@ public class Database {
                         }
                         result[0] = tmp;
                         result[0].add(snapshot);
-                        i[0]++;
+                        if(i[0] != ids.size()) i[0]++;
                         if(i[0] == ids.size()){
                             listener.onGetAll(result[0]);
                         }
