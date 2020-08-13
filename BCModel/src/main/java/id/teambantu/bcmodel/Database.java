@@ -797,6 +797,7 @@ public class Database {
                 @Override
                 public void onDataEntered(DataSnapshot dataSnapshot, GeoLocation location) {
                     data.put(dataSnapshot.getKey(), dataSnapshot.getKey());
+                    update();
                 }
 
                 @Override
@@ -807,12 +808,12 @@ public class Database {
 
                 @Override
                 public void onDataMoved(DataSnapshot dataSnapshot, GeoLocation location) {
-
+                    update();
                 }
 
                 @Override
                 public void onDataChanged(DataSnapshot dataSnapshot, GeoLocation location) {
-
+                    update();
                 }
 
                 @Override
@@ -826,7 +827,7 @@ public class Database {
                 }
                 @Override
                 public void onGeoQueryError(DatabaseError error) {
-
+                    update();
                 }
             });
         }
