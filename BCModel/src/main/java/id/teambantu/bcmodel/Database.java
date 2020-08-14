@@ -8,10 +8,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.firebase.geofire.GeoFire;
-import com.firebase.geofire.GeoLocation;
-import com.firebase.geofire.GeoQueryDataEventListener;
-import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -19,8 +15,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
@@ -37,7 +31,6 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import id.teambantu.bcmodel.collections.Chat;
@@ -51,11 +44,9 @@ import id.teambantu.bcmodel.collections.Promo;
 import id.teambantu.bcmodel.collections.Slider;
 import id.teambantu.bcmodel.collections.User;
 import id.teambantu.bcmodel.handler.BCBoolean;
-import id.teambantu.bcmodel.handler.BCDBTask;
 import id.teambantu.bcmodel.handler.BCDocumentReference;
 import id.teambantu.bcmodel.handler.BCDocumentSnapshot;
 import id.teambantu.bcmodel.handler.BCGetWithId;
-import id.teambantu.bcmodel.handler.BCNearby;
 import id.teambantu.bcmodel.handler.BCQuerySnapshot;
 import id.teambantu.bcmodel.handler.BCUploadFile;
 import id.teambantu.bcmodel.handler.OnGetPromoLocalListener;
@@ -66,7 +57,6 @@ import id.teambantu.bcmodel.helper.Facilities;
 import id.teambantu.bcmodel.helper.Favorite;
 import id.teambantu.bcmodel.helper.Invoice;
 import id.teambantu.bcmodel.helper.Items;
-import id.teambantu.bcmodel.helper.Location;
 import id.teambantu.bcmodel.helper.Messages;
 import id.teambantu.bcmodel.helper.Open;
 import id.teambantu.bcmodel.helper.Review;
@@ -181,38 +171,38 @@ public class Database {
             });
         }
 
-        public enum DBType {
-            MITRA, PROMO, DRIVER, USER, NEWS, CHAT, NOTIF, ORDER, SLIDER
-        }
-
-        public static void getWithStringID(final List<String> ids, CollectionReference ref, final BCGetWithId listener){
+        public static void getWithStringID(final List<String> ids, CollectionReference ref, final BCGetWithId listener) {
             final List<DocumentSnapshot>[] result = new List[]{new ArrayList<>()};
-            if(ids.size() == 0){
+            if (ids.size() == 0) {
                 listener.onGetAll(result[0]);
                 return;
             }
             final int[] i = {0};
-            for (String id:
+            for (String id :
                     ids) {
                 addDocumentChangeListener(ref.document(id), new BCDocumentSnapshot() {
                     @Override
                     public void onDocumentChange(DocumentSnapshot snapshot) {
                         List<DocumentSnapshot> tmp = new ArrayList<>();
-                        for (DocumentSnapshot ds:
+                        for (DocumentSnapshot ds :
                                 result[0]) {
-                            if(!ds.getId().equals(snapshot.getId())){
+                            if (!ds.getId().equals(snapshot.getId())) {
                                 tmp.add(ds);
                             }
                         }
                         result[0] = tmp;
                         result[0].add(snapshot);
-                        if(i[0] < ids.size())i[0]++;
-                        if(i[0] == ids.size()){
+                        if (i[0] < ids.size()) i[0]++;
+                        if (i[0] == ids.size()) {
                             listener.onGetAll(result[0]);
                         }
                     }
                 });
             }
+        }
+
+        public enum DBType {
+            MITRA, PROMO, DRIVER, USER, NEWS, CHAT, NOTIF, ORDER, SLIDER
         }
 
         public static class Firestore {
@@ -584,7 +574,7 @@ public class Database {
             }
 
             public static void addOrderItemsFacilities(final String id, final String idFacilities, Items items, final BCDocumentReference listener) {
-                orderItemsFacilities(id,idFacilities).add(items).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                orderItemsFacilities(id, idFacilities).add(items).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentReference> task) {
                         if (task.isSuccessful()) {
@@ -692,25 +682,66 @@ public class Database {
 
         }
 
-        public static class Realtime{
-            private static FirebaseDatabase db(){return FirebaseDatabase.getInstance();}
-            public static DatabaseReference availableMitra(){return db().getReference(MITRA);}
-            public static DatabaseReference availableDriver(){return db().getReference(DRIVER);}
+        public static class Realtime {
+            private static FirebaseDatabase db() {
+                return FirebaseDatabase.getInstance();
+            }
+
+            public static DatabaseReference availableMitra() {
+                return db().getReference(MITRA);
+            }
+
+            public static DatabaseReference availableDriver() {
+                return db().getReference(DRIVER);
+            }
         }
 
-        public static class Storage{
-            private static FirebaseStorage db(){return FirebaseStorage.getInstance();}
-            public static StorageReference storageRef() {return  db().getReference();}
-            public static StorageReference ktp(){return storageRef().child("KTP");}
-            public static StorageReference mitraImage(){return storageRef().child(MITRA);}
-            public static StorageReference complain(){return storageRef().child(COMPLAIN);}
-            public static StorageReference chat(){return storageRef().child(CHAT);}
-            public static StorageReference invoice(){return storageRef().child(INVOICE);}
-            public static StorageReference notification(){return storageRef().child(NOTIF);}
-            public static StorageReference promo(){return storageRef().child(PROMO);}
-            public static StorageReference news(){return storageRef().child(NEWS);}
-            public static StorageReference slider(){return storageRef().child(SLIDER);}
-            public static void upload(byte[] file, StorageReference ref, final BCUploadFile listener){
+        public static class Storage {
+            private static FirebaseStorage db() {
+                return FirebaseStorage.getInstance();
+            }
+
+            public static StorageReference storageRef() {
+                return db().getReference();
+            }
+
+            public static StorageReference ktp() {
+                return storageRef().child("KTP");
+            }
+
+            public static StorageReference mitraImage() {
+                return storageRef().child(MITRA);
+            }
+
+            public static StorageReference complain() {
+                return storageRef().child(COMPLAIN);
+            }
+
+            public static StorageReference chat() {
+                return storageRef().child(CHAT);
+            }
+
+            public static StorageReference invoice() {
+                return storageRef().child(INVOICE);
+            }
+
+            public static StorageReference notification() {
+                return storageRef().child(NOTIF);
+            }
+
+            public static StorageReference promo() {
+                return storageRef().child(PROMO);
+            }
+
+            public static StorageReference news() {
+                return storageRef().child(NEWS);
+            }
+
+            public static StorageReference slider() {
+                return storageRef().child(SLIDER);
+            }
+
+            public static void upload(byte[] file, StorageReference ref, final BCUploadFile listener) {
                 final StorageReference refFile = ref.child(String.valueOf(System.currentTimeMillis()));
 
                 UploadTask uploadTask = refFile.putBytes(file);
@@ -718,20 +749,20 @@ public class Database {
                 uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                     @Override
                     public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                        if(!task.isSuccessful())
+                        if (!task.isSuccessful())
                             throw task.getException();
                         return refFile.getDownloadUrl();
                     }
                 }).addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
                     public void onComplete(@NonNull Task<Uri> task) {
-                        if(task.isSuccessful()) listener.onSuccess(task.getResult());
+                        if (task.isSuccessful()) listener.onSuccess(task.getResult());
                         else listener.onFailure(task.getException());
                     }
                 });
             }
 
-            public static void upload(InputStream stream, StorageReference ref, final BCUploadFile listener){
+            public static void upload(InputStream stream, StorageReference ref, final BCUploadFile listener) {
 
                 final StorageReference refFile = ref.child(String.valueOf(System.currentTimeMillis()));
 
@@ -739,40 +770,40 @@ public class Database {
                 uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                     @Override
                     public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                        if(!task.isSuccessful())
+                        if (!task.isSuccessful())
                             throw task.getException();
                         return refFile.getDownloadUrl();
                     }
                 }).addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
                     public void onComplete(@NonNull Task<Uri> task) {
-                        if(task.isSuccessful()) listener.onSuccess(task.getResult());
+                        if (task.isSuccessful()) listener.onSuccess(task.getResult());
                         else listener.onFailure(task.getException());
                     }
                 });
             }
 
-            public static void upload(Uri uri, StorageReference ref, final BCUploadFile listener){
+            public static void upload(Uri uri, StorageReference ref, final BCUploadFile listener) {
                 final StorageReference refFile = ref.child(String.valueOf(System.currentTimeMillis()));
                 UploadTask uploadTask = refFile.putFile(uri);
 
                 uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                     @Override
                     public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                        if(!task.isSuccessful())
+                        if (!task.isSuccessful())
                             throw task.getException();
                         return refFile.getDownloadUrl();
                     }
                 }).addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
                     public void onComplete(@NonNull Task<Uri> task) {
-                        if(task.isSuccessful()) listener.onSuccess(task.getResult());
+                        if (task.isSuccessful()) listener.onSuccess(task.getResult());
                         else listener.onFailure(task.getException());
                     }
                 });
             }
 
-            public static void delete(StorageReference ref, final BCBoolean listener){
+            public static void delete(StorageReference ref, final BCBoolean listener) {
                 ref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -786,70 +817,6 @@ public class Database {
                 });
             }
 
-        }
-    }
-
-    public static class Maps{
-        private static GeoFire fire(DatabaseReference ref){return new GeoFire(ref);}
-        public static void searchNearby(DatabaseReference ref, Location center, double radius, final BCNearby nearby){
-            fire(ref).queryAtLocation(new GeoLocation(center.getLatitude(), center.getLongitude()), radius).addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
-                HashMap<String, String> data = new HashMap<>();
-                @Override
-                public void onDataEntered(DataSnapshot dataSnapshot, GeoLocation location) {
-                    data.put(dataSnapshot.getKey(), dataSnapshot.getKey());
-                    update();
-                }
-
-                @Override
-                public void onDataExited(DataSnapshot dataSnapshot) {
-                    data.remove(dataSnapshot.getKey());
-                    update();
-                }
-
-                @Override
-                public void onDataMoved(DataSnapshot dataSnapshot, GeoLocation location) {
-                    update();
-                }
-
-                @Override
-                public void onDataChanged(DataSnapshot dataSnapshot, GeoLocation location) {
-                    update();
-                }
-
-                @Override
-                public void onGeoQueryReady() {
-                    update();
-                }
-
-                void update(){
-                    List<String> near = new ArrayList<>(data.values());
-                    nearby.onNearby(near);
-                }
-                @Override
-                public void onGeoQueryError(DatabaseError error) {
-                    update();
-                }
-            });
-        }
-        public static void addMitraMaps(String id, Location location, final BCBoolean list){
-            fire(Firebase.Realtime.availableMitra()).setLocation(id, new GeoLocation(location.getLatitude(), location.getLongitude()), new GeoFire.CompletionListener() {
-                @Override
-                public void onComplete(String key, DatabaseError error) {
-                    if (error==null)
-                    list.onSuccess(true);
-                    else  list.onSuccess(false);
-                }
-            });
-        }
-        public static void addDriverMaps(String id, Location location, final BCBoolean list){
-            fire(Firebase.Realtime.availableDriver()).setLocation(id, new GeoLocation(location.getLatitude(), location.getLongitude()), new GeoFire.CompletionListener() {
-                @Override
-                public void onComplete(String key, DatabaseError error) {
-                    if (error==null)
-                        list.onSuccess(true);
-                    else  list.onSuccess(false);
-                }
-            });
         }
     }
 }
