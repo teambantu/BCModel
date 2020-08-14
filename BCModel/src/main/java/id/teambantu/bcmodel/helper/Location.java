@@ -1,7 +1,5 @@
 package id.teambantu.bcmodel.helper;
 
-import com.firebase.geofire.GeoLocation;
-
 public class Location {
     private String name = "";
     private String address = "";
