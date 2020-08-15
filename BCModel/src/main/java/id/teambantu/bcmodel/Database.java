@@ -8,6 +8,9 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -15,6 +18,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
@@ -31,6 +36,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import id.teambantu.bcmodel.collections.Chat;
@@ -47,6 +53,7 @@ import id.teambantu.bcmodel.handler.BCBoolean;
 import id.teambantu.bcmodel.handler.BCDocumentReference;
 import id.teambantu.bcmodel.handler.BCDocumentSnapshot;
 import id.teambantu.bcmodel.handler.BCGetWithId;
+import id.teambantu.bcmodel.handler.BCNearby;
 import id.teambantu.bcmodel.handler.BCQuerySnapshot;
 import id.teambantu.bcmodel.handler.BCUploadFile;
 import id.teambantu.bcmodel.handler.OnGetPromoLocalListener;
@@ -57,6 +64,7 @@ import id.teambantu.bcmodel.helper.Facilities;
 import id.teambantu.bcmodel.helper.Favorite;
 import id.teambantu.bcmodel.helper.Invoice;
 import id.teambantu.bcmodel.helper.Items;
+import id.teambantu.bcmodel.helper.Location;
 import id.teambantu.bcmodel.helper.Messages;
 import id.teambantu.bcmodel.helper.Open;
 import id.teambantu.bcmodel.helper.Review;
@@ -665,16 +673,15 @@ public class Database {
                 return open(id).document(idOpen);
             }
 
-            public static void addOpen(final String id, Open open, final BCDocumentReference listener) {
-                open(id).add(open).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+            public static void addOpen(final String id, Open open, final BCBoolean listener) {
+                open(id).document(open.getDay().toString()).set(open).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
-                    public void onComplete(@NonNull Task<DocumentReference> task) {
+                    public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            open(id, task.getResult().getId()).update("id", task.getResult().getId());
-                            listener.onDocumentChange(task.getResult());
+                            listener.onSuccess(true);
                         } else {
                             Log.d(TAG, "addOpen: " + task.getException());
-                            listener.onDocumentChange(null);
+                            listener.onSuccess(false);
                         }
                     }
                 });
@@ -817,6 +824,65 @@ public class Database {
                 });
             }
 
+        }
+    }
+
+    public static class Maps{
+        private static GeoFire fire(DatabaseReference ref){return new GeoFire(ref);}
+        public static void searchNearby(DatabaseReference ref, Location center, double radius, final BCNearby nearby){
+            fire(ref).queryAtLocation(new GeoLocation(center.getLatitude(), center.getLongitude()), radius).addGeoQueryEventListener(new GeoQueryEventListener() {
+                List<String> keys = new ArrayList<>();
+                @Override
+                public void onKeyEntered(String key, GeoLocation location) {
+                    keys.add(key);
+                    update();
+                }
+
+                @Override
+                public void onKeyExited(String key) {
+                    keys.remove(key);
+                    update();
+                }
+
+                @Override
+                public void onKeyMoved(String key, GeoLocation location) {
+
+                }
+
+                @Override
+                public void onGeoQueryReady() {
+                    update();
+                }
+
+                @Override
+                public void onGeoQueryError(DatabaseError error) {
+
+                }
+
+                void update(){
+                    nearby.onNearby(keys);
+                }
+            });
+        }
+        public static void addMitraMaps(String id, Location location, final BCBoolean list){
+            fire(Firebase.Realtime.availableMitra()).setLocation(id, new GeoLocation(location.getLatitude(), location.getLongitude()), new GeoFire.CompletionListener() {
+                @Override
+                public void onComplete(String key, DatabaseError error) {
+                    if (error==null)
+                        list.onSuccess(true);
+                    else  list.onSuccess(false);
+                }
+            });
+        }
+        public static void addDriverMaps(String id, Location location, final BCBoolean list){
+            fire(Firebase.Realtime.availableDriver()).setLocation(id, new GeoLocation(location.getLatitude(), location.getLongitude()), new GeoFire.CompletionListener() {
+                @Override
+                public void onComplete(String key, DatabaseError error) {
+                    if (error==null)
+                        list.onSuccess(true);
+                    else  list.onSuccess(false);
+                }
+            });
         }
     }
 }
