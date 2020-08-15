@@ -280,12 +280,12 @@ public class Database {
             }
 
             public static DocumentReference driver(String id) {
-                return owner().document(id);
+                return driver().document(id);
             }
 
             public static void addDriver(Driver driver, final BCBoolean listener) {
                 driver.setId(driver.getPhoneNumber());
-                owner(driver.getId()).set(driver).addOnCompleteListener(new OnCompleteListener<Void>() {
+                driver(driver.getId()).set(driver).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         listener.onSuccess(task.isSuccessful());
