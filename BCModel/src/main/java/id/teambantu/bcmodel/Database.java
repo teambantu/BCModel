@@ -53,6 +53,7 @@ import id.teambantu.bcmodel.handler.BCBoolean;
 import id.teambantu.bcmodel.handler.BCDocumentReference;
 import id.teambantu.bcmodel.handler.BCDocumentSnapshot;
 import id.teambantu.bcmodel.handler.BCGetWithId;
+import id.teambantu.bcmodel.handler.BCLocation;
 import id.teambantu.bcmodel.handler.BCNearby;
 import id.teambantu.bcmodel.handler.BCQuerySnapshot;
 import id.teambantu.bcmodel.handler.BCUploadFile;
@@ -133,6 +134,40 @@ public class Database {
 
         public static void getPromoSaved(Activity activity, OnGetPromoLocalListener listener) {
             listener.onGet(getData(activity, PROMO));
+        }
+
+        public static void saveLocation(Activity activity, Location location){
+            setStringData(activity, new String[][]{
+                    {"LOC-NAME", location.getName()},
+                    {"LOC-ADD", location.getAddress()},
+                    {"LOC-DETAIL-ADD", location.getDetailAddress()},
+                    {"LOC-LAT", String.valueOf(location.getLatitude())},
+                    {"LOC-LONG", String.valueOf(location.getLatitude())},
+                    {"LOC-CREATED", String.valueOf(location.getCreatedAt())}
+            });
+        }
+
+        public static void getSavedLocation(Activity activity, BCLocation listener){
+            Location location = new Location();
+
+            if (!isKey(activity, "LOC-NAME")) {
+                listener.onFailded("No Saved location");
+                return;
+            }
+
+            location.setName(getData(activity, "LOC-NAME"));
+            location.setAddress(getData(activity, "LOC-ADD"));
+            location.setDetailAddress(getData(activity, "LOC-DETAIL-ADD"));
+            location.setLatitude(Double.parseDouble(getData(activity, "LOC-LAT")));
+            location.setLongitude(Double.parseDouble(getData(activity, "LOC-LONG")));
+            location.setCreatedAt(Long.parseLong(getData(activity, "LOC-CREATED")));
+
+            listener.onGetLocation(location);
+        }
+
+        public static void removeLocation(Activity activity){
+            String[] ids = {"LOC-NAME", "LOC-ADD", "LOC-DETAIL-ADD", "LOC-LAT", "LOC-LONG", "LOC-CREATED"};
+            removeKey(activity, ids);
         }
     }
 
