@@ -142,7 +142,7 @@ public class Database {
                     {"LOC-ADD", location.getAddress()},
                     {"LOC-DETAIL-ADD", location.getDetailAddress()},
                     {"LOC-LAT", String.valueOf(location.getLatitude())},
-                    {"LOC-LONG", String.valueOf(location.getLatitude())},
+                    {"LOC-LONG", String.valueOf(location.getLongitude())},
                     {"LOC-CREATED", String.valueOf(location.getCreatedAt())}
             });
         }
