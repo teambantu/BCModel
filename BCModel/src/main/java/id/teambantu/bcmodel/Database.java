@@ -149,7 +149,6 @@ public class Database {
 
         public static void getSavedLocation(Activity activity, BCLocation listener){
             Location location = new Location();
-
             if (!isKey(activity, "LOC-NAME")) {
                 listener.onFailded("No Saved location");
                 return;
