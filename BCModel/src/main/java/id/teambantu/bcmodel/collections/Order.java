@@ -7,6 +7,8 @@ public class Order {
     private String id = "";
     private String userId = "";
     private String mitraId = "";
+    private String pickingDriverId = "";
+    private String deliveringDriverId = "";
     private String promoId = "";
     private String chatId = "";
     private StatusType orderStatus = StatusType.NONE;
@@ -14,16 +16,19 @@ public class Order {
     private Location pickupLocation = new Location();
     private String notes = "";
     private double deliveryCost = 0;
+    private double featureCost = 0;
     private double totalCost = 0;
     private long createdAt = System.currentTimeMillis();
 
     public Order() {
     }
 
-    public Order(String id, String userId, String mitraId, String promoId, String chatId, StatusType orderStatus, long pickupDate, Location pickupLocation, String notes, double deliveryCost, double totalCost, long createdAt) {
+    public Order(String id, String userId, String mitraId, String pickingDriverId, String deliveringDriverId, String promoId, String chatId, StatusType orderStatus, long pickupDate, Location pickupLocation, String notes, double deliveryCost, double featureCost, double totalCost, long createdAt) {
         this.id = id;
         this.userId = userId;
         this.mitraId = mitraId;
+        this.pickingDriverId = pickingDriverId;
+        this.deliveringDriverId = deliveringDriverId;
         this.promoId = promoId;
         this.chatId = chatId;
         this.orderStatus = orderStatus;
@@ -31,6 +36,7 @@ public class Order {
         this.pickupLocation = pickupLocation;
         this.notes = notes;
         this.deliveryCost = deliveryCost;
+        this.featureCost = featureCost;
         this.totalCost = totalCost;
         this.createdAt = createdAt;
     }
@@ -57,6 +63,22 @@ public class Order {
 
     public void setMitraId(String mitraId) {
         this.mitraId = mitraId;
+    }
+
+    public String getPickingDriverId() {
+        return pickingDriverId;
+    }
+
+    public void setPickingDriverId(String pickingDriverId) {
+        this.pickingDriverId = pickingDriverId;
+    }
+
+    public String getDeliveringDriverId() {
+        return deliveringDriverId;
+    }
+
+    public void setDeliveringDriverId(String deliveringDriverId) {
+        this.deliveringDriverId = deliveringDriverId;
     }
 
     public String getPromoId() {
@@ -115,6 +137,14 @@ public class Order {
         this.deliveryCost = deliveryCost;
     }
 
+    public double getFeatureCost() {
+        return featureCost;
+    }
+
+    public void setFeatureCost(double featureCost) {
+        this.featureCost = featureCost;
+    }
+
     public double getTotalCost() {
         return totalCost;
     }
@@ -137,6 +167,8 @@ public class Order {
                 "id='" + id + '\'' +
                 ", userId='" + userId + '\'' +
                 ", mitraId='" + mitraId + '\'' +
+                ", pickingDriverId='" + pickingDriverId + '\'' +
+                ", deliveringDriverId='" + deliveringDriverId + '\'' +
                 ", promoId='" + promoId + '\'' +
                 ", chatId='" + chatId + '\'' +
                 ", orderStatus=" + orderStatus +
@@ -144,6 +176,7 @@ public class Order {
                 ", pickupLocation=" + pickupLocation +
                 ", notes='" + notes + '\'' +
                 ", deliveryCost=" + deliveryCost +
+                ", featureCost=" + featureCost +
                 ", totalCost=" + totalCost +
                 ", createdAt=" + createdAt +
                 '}';

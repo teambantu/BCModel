@@ -1,11 +1,11 @@
 package id.teambantu.bcmodel.helper;
 
+import id.teambantu.bcmodel.type.MessageSenderType;
 import id.teambantu.bcmodel.type.MessageType;
 
 public class Messages {
     private String id = "";
-    private String senderId = "";
-    private String receiverId = "";
+    private MessageSenderType senderType = MessageSenderType.NONE;
     private MessageType type = MessageType.NONE;
     private long createdAt = System.currentTimeMillis();
     private String imageUrl = "";
@@ -14,10 +14,9 @@ public class Messages {
     public Messages() {
     }
 
-    public Messages(String id, String senderId, String receiverId, MessageType type, long createdAt, String imageUrl, String messages) {
+    public Messages(String id, MessageSenderType senderType, MessageType type, long createdAt, String imageUrl, String messages) {
         this.id = id;
-        this.senderId = senderId;
-        this.receiverId = receiverId;
+        this.senderType = senderType;
         this.type = type;
         this.createdAt = createdAt;
         this.imageUrl = imageUrl;
@@ -32,20 +31,12 @@ public class Messages {
         this.id = id;
     }
 
-    public String getSenderId() {
-        return senderId;
+    public MessageSenderType getSenderType() {
+        return senderType;
     }
 
-    public void setSenderId(String senderId) {
-        this.senderId = senderId;
-    }
-
-    public String getReceiverId() {
-        return receiverId;
-    }
-
-    public void setReceiverId(String receiverId) {
-        this.receiverId = receiverId;
+    public void setSenderType(MessageSenderType senderType) {
+        this.senderType = senderType;
     }
 
     public MessageType getType() {
@@ -84,8 +75,7 @@ public class Messages {
     public String toString() {
         return "Messages{" +
                 "id='" + id + '\'' +
-                ", senderId='" + senderId + '\'' +
-                ", receiverId='" + receiverId + '\'' +
+                ", senderType=" + senderType +
                 ", type=" + type +
                 ", createdAt=" + createdAt +
                 ", imageUrl='" + imageUrl + '\'' +
