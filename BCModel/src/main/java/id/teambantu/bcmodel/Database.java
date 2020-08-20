@@ -525,17 +525,12 @@ public class Database {
                 return favorite(id).document(idFavorite);
             }
 
-            public static void addFavorite(final String id, Favorite favorite, final BCDocumentReference listener) {
-                favorite(id).add(favorite).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+            public static void addFavorite(final String id, Favorite favorite, final BCBoolean listener) {
+                favorite.setId(favorite.getMitraId());
+                favorite(id).document(favorite.getMitraId()).set(favorite).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
-                    public void onComplete(@NonNull Task<DocumentReference> task) {
-                        if (task.isSuccessful()) {
-                            favorite(id, task.getResult().getId()).update("id", task.getResult().getId());
-                            listener.onDocumentChange(task.getResult());
-                        } else {
-                            Log.d(TAG, "addFavorite: " + task.getException());
-                            listener.onDocumentChange(null);
-                        }
+                    public void onComplete(@NonNull Task<Void> task) {
+                        listener.onSuccess(task.isSuccessful());
                     }
                 });
             }
