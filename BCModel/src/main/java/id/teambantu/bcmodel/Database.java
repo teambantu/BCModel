@@ -282,7 +282,7 @@ public class Database {
             }
 
             public static void addMitra(Mitra mitra, final BCBoolean listener) {
-                mitra.setId(currentUser().getUid());
+                mitra.setId(currentUser().getPhoneNumber());
                 mitra(mitra.getId()).set(mitra).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
