@@ -63,6 +63,7 @@ import id.teambantu.bcmodel.helper.Complain;
 import id.teambantu.bcmodel.helper.DriverMitra;
 import id.teambantu.bcmodel.helper.Facilities;
 import id.teambantu.bcmodel.helper.Favorite;
+import id.teambantu.bcmodel.helper.Feature;
 import id.teambantu.bcmodel.helper.Invoice;
 import id.teambantu.bcmodel.helper.Items;
 import id.teambantu.bcmodel.helper.Location;
@@ -94,6 +95,7 @@ public class Database {
     private static final String REVIEW = "REVIEW";
     private static final String OPEN = "OPEN";
     private static final String ITEMS = "ITEMS";
+    private static final String FEATURES = "FEATURES";
 
 
     public static class Local {
@@ -532,6 +534,29 @@ public class Database {
                             listener.onDocumentChange(task.getResult());
                         } else {
                             Log.d(TAG, "addFavorite: " + task.getException());
+                            listener.onDocumentChange(null);
+                        }
+                    }
+                });
+            }
+
+            public static CollectionReference features(String id) {
+                return mitra(id).collection(FEATURES);
+            }
+
+            public static DocumentReference feature(String id, String idFeature) {
+                return features(id).document(idFeature);
+            }
+
+            public static void addFeature(final String id, Feature feature, final BCDocumentReference listener) {
+                features(id).add(feature).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentReference> task) {
+                        if (task.isSuccessful()) {
+                            feature(id, task.getResult().getId()).update("id", task.getResult().getId());
+                            listener.onDocumentChange(task.getResult());
+                        } else {
+                            Log.d(TAG, "addFeature: " + task.getException());
                             listener.onDocumentChange(null);
                         }
                     }
