@@ -6,6 +6,7 @@ public class Feature {
     private String id = "";
     private String name= "";
     private FeatureType type = FeatureType.NONE;
+    private long finishAt = 0;
     private double minOrder = 0;
     private long cost = 0;
     private long createdAt = System.currentTimeMillis();
@@ -13,10 +14,11 @@ public class Feature {
     public Feature() {
     }
 
-    public Feature(String id, String name, FeatureType type, double minOrder, long cost, long createdAt) {
+    public Feature(String id, String name, FeatureType type, long finishAt, double minOrder, long cost, long createdAt) {
         this.id = id;
         this.name = name;
         this.type = type;
+        this.finishAt = finishAt;
         this.minOrder = minOrder;
         this.cost = cost;
         this.createdAt = createdAt;
@@ -44,6 +46,14 @@ public class Feature {
 
     public void setType(FeatureType type) {
         this.type = type;
+    }
+
+    public long getFinishAt() {
+        return finishAt;
+    }
+
+    public void setFinishAt(long finishAt) {
+        this.finishAt = finishAt;
     }
 
     public double getMinOrder() {
@@ -76,6 +86,7 @@ public class Feature {
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", type=" + type +
+                ", finishAt=" + finishAt +
                 ", minOrder=" + minOrder +
                 ", cost=" + cost +
                 ", createdAt=" + createdAt +
